@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style type="text/css">
+body {
+font-family: Courier, Sans-Serif}
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: 100%;
+  width : 400px;
+  padding: 5;
+  margin: 10;
+  box-sizing: border-box;
+  /* we create our grid */
+  display  : grid;
+  grid-gap : 20px;
+  grid-template-columns : repeat(2, 1fr);
+  grid-template-rows    : 10em 1em 1em 1em;
+}
+
+fieldset {
+  position: relative;
+}
+
+legend {
+  position: relative;
+  top: 0;
+  left: 0;
+  font-weight: bold;
+  font-size:13pt;
+}
+
+ol {font-family: 'Courier New', Courier, monospace;
+    font-size: small;
+    }
+li {
+    border-bottom: 1px solid #FFFFFF;
+}
+
+.f1 {background-color:#EEEEEE; border: 2px solid #AAAAAA; border-radius: 5px; padding: 20px;}
+textarea {
+  font-size: 1rem;
+  line-height: 1.5em;
+  font-family: 'Courier New'; }
+
+label.sameline {
+  float: left;
+  width: 40px;
+}
+
+span.sameline{
+  display: block;
+  overflow: hidden;
+  padding: 0px 4px 0px 6px;
+}
+
+
+</style>
+<script type="text/javascript" src="microapi.js"></script>
+<script type="text/javascript">
+
+
+
+
+function dbViewlistRecords(){
+    //console.debug(`content: ${this.responseText}`)
+    let recordLst = JSON.parse(this.responseText)
+    //console.info(`recordLst: ${recordLst}`)
+    let ul = document.getElementById("recordList")
+    ul.innerHTML = ""
+    for (var i = 0; i < recordLst.length; i++){
+        if (recordLst[i].status == "STATUS_ALIVE"){
+            let li = document.createElement("li")
+        li.innerHTML = JSON.stringify(recordLst[i]) + `<a href = javascript:dbViewShowHistory('${recordLst[i].id}')>History</a> <a href="javascript:dbViewUpdate('${recordLst[i].id}', ${recordLst[i].revision})">Update</a> <a href="javascript:dbViewDelete('${recordLst[i].id}', ${recordLst[i].revision})">Delete</a>`
+        ul.appendChild(li) 
+        }
+    }
+}
+
+function dbViewUIClearCreateForm(){
+    let collectionCreateInput = document.getElementById("collectionCreateInput")
+    collectionCreateInput.value = ""
+
+    let contentCreateInput = document.getElementById("contentCreateInput")
+    contentCreateInput.value = ""
+}
+
+function dbViewUIClearUpdateForm(){
+    let updateIdInput = document.getElementById("updateIdInput")
+    updateIdInput.value = ""
+
+    let updateRevisionInput = document.getElementById("updateRevisionInput")
+    updateRevisionInput.value = ""
+
+    let updateCollectionInput = document.getElementById("updateCollectionInput")
+    updateCollectionInput.value = ""
+
+    let updateContentInput = document.getElementById("updateContentInput")
+    updateContentInput.value = ""
+}
+
+function dbViewHandleUserClickUpdateButton(){
+    let handleResponse = function(){
+        dbViewUIClearUpdateForm()
+        console.debug("Done updating.")
+    }
+    let updateIdInput = document.getElementById("updateIdInput")
+    let id = updateIdInput.value
+
+    let updateRevisionInput = document.getElementById("updateRevisionInput")
+    let revision = updateRevisionInput.value 
+
+    let updateContentInput = document.getElementById("updateContentInput")
+    let content = updateContentInput.value
+
+    updateResource(handleResponse, id, revision, content)
+}
+
+function dbViewUpdate(id, revision){
+    let callbackLoadUpdateDBO = function(){
+        let dbo = JSON.parse(this.responseText)
+        console.debug("Got response" + JSON.stringify(dbo))
+        let updateIdInput = document.getElementById("updateIdInput")
+        updateIdInput.value = dbo.id
+        let updateRevisionInput = document.getElementById("updateRevisionInput")
+        updateRevisionInput.value = dbo.revision
+        let updateCollectionInput = document.getElementById("updateCollectionInput")
+        updateCollectionInput.value = dbo.collection
+        let updateContentInput = document.getElementById("updateContentInput")
+        updateContentInput.value = dbo.content
+    }
+    let dbo = getResourceById(callbackLoadUpdateDBO, id)
+}
+
+
+function dbViewDelete(id, revision){
+    let handlerFn = function(){
+        console.log("Delete complete.")
+    }
+    deleteResource(handlerFn, id, revision)
+}
+
+
+function handleCreateResponse(){
+    console.log("Done create response:")
+    console.log(this.status)
+    dbViewUIClearCreateForm()
+}
+
+function dbViewCreate(collection, content){
+    let collectionInput = document.getElementById("collectionCreateInput").value
+    let contentInput = document.getElementById("contentCreateInput").value
+    createResource(handleCreateResponse, collectionInput, contentInput)
+    console.log("Done create.")
+}
+
+</script>
+
+    </head>
+    <body>
+        <div class="f1">
+        <form>
+            <legend>Create</legend>
+            <label  for="collectionCreateInput">Collection:</label>
+            <input type="text" id="collectionCreateInput"/><br/>
+            <label for="contentCreateInput" >Content:</label>
+            <textarea class="contentarea" cols="80" rows="5" id="contentCreateInput"></textarea><br/>
+            <input type="button" onclick="javascript:dbViewCreate();" value="Create"/>
+        </form>
+        </div>
+        <div class="f1">
+        <form>
+            <legend>Update</legend>
+            <label for="updateIdInput">id:</label>
+            <input type="text" id="updateIdInput" readonly/>
+            <label for="updateIdInput">revision:</label>
+            <input type="text" id="updateRevisionInput" readonly/>
+            <label for="updateCollectionInput">Collection:</label>
+            <input type="text" id="updateCollectionInput" readonly>
+            <label for="updateContentInput">Content:</label>
+            <textarea class="contentarea" cols="80" rows="5" id="updateContentInput"></textarea>
+            <input type="button" onclick="javascript:dbViewHandleUserClickUpdateButton();" value="Update"/>
+        </form>
+        </div>
+        <div class="f1">
+            <legend>Database</legend>
+<input type="button" onclick="javascript:getAllResources(dbViewlistRecords)" value="reload resources"></input>
+<ol id="recordList">
+
+</ol>
+
+
+        </div>
+
+
+
+</body>
+    </html>
