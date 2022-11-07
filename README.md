@@ -85,7 +85,7 @@ Collection urls can be used to mock microservices.
 
 
 ## TODO
-    * See if xml can be stored as some kind of payload.
-    * Make configurable by property file.
-    * Rebuild collection index from db-file at restart. Currently collection index is only kept in memory and lost at restart.
-    * Remake the file persistence solution. After having used microdb as a micro service mock in an automated test suite I found 10000+ files, each one representing a complete snapshot state of the database, on the local file system. Choose either to replace files or make a transaction log solution by only persisting the delta in time stamped files. 
+* See if xml can be stored as some kind of payload.
+* Make configurable by property file.
+* Rebuild collection index from db-file at restart. Currently collection index is only kept in memory and lost at restart.
+* Remake the file persistence solution. After having used microdb as a micro service mock in an automated test suite I found 10000+ files, each one representing a complete snapshot state of the database, on the local file system. Choose either to replace files or make a transaction log solution by only persisting the delta in time stamped files. 
