@@ -73,19 +73,19 @@ Collection urls can be used to mock microservices.
     //> [{ "_id":"de2c1ccf-4cc2-4045-ba77-64b4e52824d7","_creationTime":null, "_type":"__DBMETA", "_rev":1, "content": "{\"creationtime\":1648735248538, \"uptime\":0, \"optime\":0, \"in\":0, \"out\":0"},{ "_id":"1a7e8d8e-5750-4deb-8cb7-5398ae722795","_creationTime":1648735249627, "_rev":1, "content": "Some content-1"},{ "_id":"c997a2d6-a7a6-4d1a-828d-b941db3536dd","_creationTime":1648735249628, "_rev":1, "content": "Some content-2"},{ "_id":"e2f83912-44a7-4082-991c-213ce4f9a72e","_creationTime":1648735249628, "_rev":1, "content": "Some content-3"},{ 
     "_id":"c997a2d6-a7a6-4d1a-828d-b941db3536dd","_creationTime":1648735249637, "_rev":2, "content": "Some content-2 updated"},{ "_id":"e2f83912-44a7-4082-991c-213ce4f9a72e","_creationTime":1648735249640, "_rev":2, "content": ""},]
 
-##Build 
+## Build 
 * Open a command line and go to the root of the project (/microdb/)
 * Type "gradle clean customFatjar" the project is built and resulting artifacts can be found under the folder microdb/build/lib
 
-#Run the application
+# Run the application
 * Open a command line and go to the build folder (mentionend under build above).
 * Type "java -jar micro.jar" The application should now run as long as the terminal is open.
 * To stop the application press "cmd + c" or close the terminal window. 
 
 
 
-##TODO
-
+## TODO
     * See if xml can be stored as some kind of payload.
-    * Make configurable by property file (add ConfigurationParser class maybe).
+    * Make configurable by property file.
     * Rebuild collection index from db-file at restart. Currently collection index is only kept in memory and lost at restart.
+    * Remake the file persistence solution. After having used microdb as a micro service mock in an automated test suite I found 10000+ files, each one representing a complete snapshot state of the database, on the local file system. Choose either to replace files or make a transaction log solution by only persisting the delta in time stamped files. 
